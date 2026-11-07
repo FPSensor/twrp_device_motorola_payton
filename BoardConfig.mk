@@ -45,27 +45,27 @@ BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_RAMDISK_OFFSET     := 0x01000000
-BOARD_KERNEL_CMDLINE :=  \
+# Same command line as the LineageOS 22.2 kernel 4.19 boot image, so the
+# TWRP ramdisk can also boot Android when installed into boot.
+BOARD_KERNEL_CMDLINE := \
     androidboot.hardware=qcom \
-    user_debug=31 \
     ehci-hcd.park=3 \
     lpm_levels.sleep_disabled=1 \
     service_locator.enable=1 \
     swiotlb=2048 \
     androidboot.configfs=true \
-    sched_enable_hmp=1 \
-    sched_enable_power_aware=1 \
     androidboot.usbcontroller=a800000.dwc3 \
-    androidboot.fastboot=1 \
-    androidboot.selinux=permissive
+    loop.max_part=7 \
+    androidboot.veritymode=eio \
+    printk.devkmsg=on \
+    androidboot.boot_devices=soc/c0c4000.sdhci \
+    androidboot.selinux=permissive \
+    loglevel=3
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 TARGET_KERNEL_ARCH := arm64
+# Kernel 4.19 from FPSensor/android_kernel_motorola_sdm660-4.19
+# (vendor/payton_defconfig), the same one LineageOS 22.2 boots.
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/$(BOARD_KERNEL_IMAGE_NAME)
-ifeq ($(TARGET_PREBUILT_KERNEL),)
-  TARGET_KERNEL_CLANG_COMPILE := true
-  TARGET_KERNEL_CONFIG := twrp_payton_defconfig
-  TARGET_KERNEL_SOURCE := kernel/motorola/msm8998
-endif
 
 # Platform
 TARGET_BOARD_PLATFORM := $(TARGET_BOOTLOADER_BOARD_NAME)
@@ -76,14 +76,25 @@ QCOM_BOARD_PLATFORMS += $(TARGET_BOARD_PLATFORM)
 # Partitions
 BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
 BOARD_BOOTIMAGE_PARTITION_SIZE := 0x04000000
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 0x102000000
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 20749172224 # 20749204992 - 32768
-BOARD_VENDORIMAGE_PARTITION_SIZE := 603979776
-BOARD_SYSTEMIMAGE_PARTITION_TYPE := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
+
+# Retrofit dynamic partitions, same layout as LineageOS 22.2: each slot's
+# super is its system + oem partitions, with the metadata on system.
+BOARD_SUPER_PARTITION_BLOCK_DEVICES := system oem
+BOARD_SUPER_PARTITION_METADATA_DEVICE := system
+BOARD_SUPER_PARTITION_SYSTEM_DEVICE_SIZE := 4328521728
+BOARD_SUPER_PARTITION_OEM_DEVICE_SIZE := 603979776
+BOARD_SUPER_PARTITION_SIZE := 4932501504
+BOARD_SUPER_PARTITION_GROUPS := payton_dynamic_partitions
+BOARD_PAYTON_DYNAMIC_PARTITIONS_SIZE := 4928307200
+BOARD_PAYTON_DYNAMIC_PARTITIONS_PARTITION_LIST := \
+    product \
+    system \
+    system_ext \
+    vendor
 
 BOARD_ROOT_EXTRA_FOLDERS := bt_firmware \
                             dsp \
@@ -104,17 +115,23 @@ TARGET_RECOVERY_DEVICE_MODULES += \
     vendor.display.config@2.0
 
 # Enable A/B Specific Flags
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 BOARD_USES_RECOVERY_AS_BOOT := true
+TW_INCLUDE_FASTBOOTD := true
 
 # Encryption
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_RESETPROP := true
 TW_USE_FSCRYPT_POLICY := 1
 BOARD_USES_QCOM_FBE_DECRYPTION := true
-PLATFORM_VERSION := 16.1.0
+# Keep the boot image header the same as LineageOS 22.2 (Android 15,
+# 2026-10). Keymaster upgrades the FBE key blobs to the patch level of
+# the running boot image when they are used, and refuses to downgrade
+# them, so decrypting /data from a TWRP with a newer patch level would
+# leave Android unable to unlock its own keys. Bump these together with
+# the LineageOS security patch.
+PLATFORM_VERSION := 15
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
-PLATFORM_SECURITY_PATCH := 2127-12-31
+PLATFORM_SECURITY_PATCH := 2026-10-01
 PRODUCT_ENFORCE_VINTF_MANIFEST := true
 VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 

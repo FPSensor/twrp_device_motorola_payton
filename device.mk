@@ -11,12 +11,23 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 # A/B support
 AB_OTA_UPDATER := true
 
+# Retrofit dynamic partitions (see BoardConfig.mk)
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+PRODUCT_RETROFIT_DYNAMIC_PARTITIONS := true
+
+# fastbootd
+PRODUCT_PACKAGES += \
+    android.hardware.fastboot@1.0-impl-mock \
+    fastbootd
+
 # A/B updater updatable partitions list. Keep in sync with the partition list
 # with "_a" and "_b" variants in the device. Note that the vendor can add more
 # more partitions to this list for the bootloader and radio.
 AB_OTA_PARTITIONS += \
     boot \
+    product \
     system \
+    system_ext \
     vendor
 
 PRODUCT_PACKAGES += \
@@ -35,6 +46,12 @@ AB_OTA_POSTINSTALL_CONFIG += \
 PRODUCT_PACKAGES += \
     qcom_decrypt \
     qcom_decrypt_fbe
+
+# First stage init reads this fstab when the TWRP ramdisk, installed in
+# boot, starts Android (the bootloader's skip_initramfs becomes
+# androidboot.force_normal_boot=1 in the 4.19 kernel).
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/recovery/fstab.qcom:$(TARGET_COPY_OUT_RECOVERY)/root/first_stage_ramdisk/fstab.qcom
 
 # Resolution
 TARGET_SCREEN_HEIGHT := 1920
