@@ -5,8 +5,26 @@ Copyright 2022 - The TeamWin Recovery Project
 
 For building TWRP for Motorola Moto X4 ONLY.
 
+This branch matches the LineageOS 22.2 port of payton to kernel 4.19
+with retrofit dynamic partitions. It doesn't work with ROMs that still
+use the static system/oem layout or kernel 4.4: use TeamWin's
+android-12.1 branch for those.
+
 ### Kernel Source
-https://github.com/moto-SDM660/android_kernel_motorola_sdm660/tree/twrp-12.1
+https://github.com/FPSensor/android_kernel_motorola_sdm660-4.19
+(branch lineage-22.2, `vendor/payton_defconfig`). `prebuilt/Image.gz-dtb`
+is built from it.
+
+### Partitions
+Motorola signs the GPT, so dynamic partitions are retrofitted: each
+slot's super is that slot's `system` and `oem` partitions, with the
+metadata at the start of `system` (`androidboot.super_partition=system`).
+`system`, `system_ext`, `product` and `vendor` are logical partitions.
+
+The boot image header must carry the same OS version and security patch
+level as the ROM (currently Android 15, 2026-10). Keymaster upgrades
+the FBE key blobs to the patch level of the running boot image when
+TWRP decrypts /data, and Android can't use upgraded blobs afterwards.
 
 ### Device specifications
 =====================================
@@ -47,7 +65,8 @@ Then add to a local manifest (if you don't have .repo/local_manifest then make t
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
   <project name="osm0sis/twrp_abtemplate" path="bootable/recovery/installer" remote="github" revision="master"/>
-  <project name="android_device_motorola_payton" path="device/motorola/payton" remote="TeamWin" revision="android-12.1"/>
+  <remote name="fpsensor" fetch="https://github.com/FPSensor" />
+  <project name="twrp_device_motorola_payton" path="device/motorola/payton" remote="fpsensor" revision="twrp-12.1"/>
 </manifest>
 ```
 
@@ -58,6 +77,10 @@ repo sync
 ```
 
 To automatically make the TWRP installer zip, you need to import this commit in the build/make path: https://gerrit.twrp.me/c/android_build/+/5445
+
+Haptics need the input force feedback fallback in minuitwrp (the 4.19
+PMIC haptics driver has no sysfs vibrator); without it TWRP works but
+doesn't vibrate.
 
 Finally execute these:
 
