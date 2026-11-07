@@ -30,6 +30,9 @@ import /init.recovery.qcom_decrypt.rc
 on fs
     wait /dev/block/platform/soc/c0c4000.sdhci
     symlink /dev/block/platform/soc/c0c4000.sdhci /dev/block/bootdevice
+    symlink /dev/block/bootdevice/by-name/oem_b /dev/block/bootdevice/by-name/vendor_b
+    symlink /dev/block/bootdevice/by-name/oem_a /dev/block/bootdevice/by-name/vendor_a
+    symlink /dev/block/bootdevice/by-name/oem /dev/block/bootdevice/by-name/vendor
     start boot-hal-1-0
 
 on boot

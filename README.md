@@ -5,10 +5,9 @@ Copyright 2022 - The TeamWin Recovery Project
 
 For building TWRP for Motorola Moto X4 ONLY.
 
-This branch matches the LineageOS 22.2 port of payton to kernel 4.19
-with retrofit dynamic partitions. It doesn't work with ROMs that still
-use the static system/oem layout or kernel 4.4: use TeamWin's
-android-12.1 branch for those.
+This branch matches the LineageOS 22.2 port of payton to kernel 4.19.
+It doesn't work with kernel 4.4 ROMs: use TeamWin's android-12.1 branch
+for those.
 
 ### Kernel Source
 https://github.com/FPSensor/android_kernel_motorola_sdm660-4.19
@@ -16,10 +15,11 @@ https://github.com/FPSensor/android_kernel_motorola_sdm660-4.19
 is built from it.
 
 ### Partitions
-Motorola signs the GPT, so dynamic partitions are retrofitted: each
-slot's super is that slot's `system` and `oem` partitions, with the
-metadata at the start of `system` (`androidboot.super_partition=system`).
-`system`, `system_ext`, `product` and `vendor` are logical partitions.
+The usual static A/B layout: `system_a/b`, and `oem_a/b` holding vendor.
+The TWRP ramdisk carries the first stage fstab, so it can still start
+Android when installed in boot: the bootloader passes skip_initramfs on
+a normal boot, which the 4.19 kernel turns into
+androidboot.force_normal_boot.
 
 The boot image header must carry the same OS version and security patch
 level as the ROM (currently Android 15, 2026-10). Keymaster upgrades
