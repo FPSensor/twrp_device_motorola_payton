@@ -63,8 +63,9 @@ BOARD_KERNEL_CMDLINE := \
     loglevel=3
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 TARGET_KERNEL_ARCH := arm64
-# Kernel 4.19 from FPSensor/android_kernel_motorola_sdm660-4.19
-# (vendor/payton_defconfig), the same one LineageOS 22.2 boots.
+# Kernel 4.19 from FPSensor/android_kernel_motorola_sdm660 (lineage-22.2,
+# vendor/sdm660-perf_defconfig + vendor/ext_config/{moto-sdm660,payton}.config),
+# the same one LineageOS 22.2 boots.
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/$(BOARD_KERNEL_IMAGE_NAME)
 
 # Platform

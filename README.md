@@ -10,9 +10,10 @@ It doesn't work with kernel 4.4 ROMs: use TeamWin's android-12.1 branch
 for those.
 
 ### Kernel Source
-https://github.com/FPSensor/android_kernel_motorola_sdm660-4.19
-(branch lineage-22.2, `vendor/payton_defconfig`). `prebuilt/Image.gz-dtb`
-is built from it.
+https://github.com/FPSensor/android_kernel_motorola_sdm660
+(branch lineage-22.2, `vendor/sdm660-perf_defconfig` plus
+`vendor/ext_config/moto-sdm660.config` and `vendor/ext_config/payton.config`).
+`prebuilt/Image.gz-dtb` is built from it.
 
 ### Partitions
 The usual static A/B layout: `system_a/b`, and `oem_a/b` holding vendor.
