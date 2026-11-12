@@ -27,12 +27,22 @@
 
 import /init.recovery.qcom_decrypt.rc
 
+on init
+    # The data policies are v1, so let vold add the keys to the session
+    # keyring: keys added to the filesystem are dropped every time recovery
+    # remounts /data, before the user gets to enter the PIN.
+    setprop ro.twrp.fscrypt.legacy_keyring true
+
 on fs
     wait /dev/block/platform/soc/c0c4000.sdhci
     symlink /dev/block/platform/soc/c0c4000.sdhci /dev/block/bootdevice
     symlink /dev/block/bootdevice/by-name/oem_b /dev/block/bootdevice/by-name/vendor_b
     symlink /dev/block/bootdevice/by-name/oem_a /dev/block/bootdevice/by-name/vendor_a
     symlink /dev/block/bootdevice/by-name/oem /dev/block/bootdevice/by-name/vendor
+    # Kernel 4.19 exposes eMMC RPMB as the char device /dev/mmcblk0rpmb,
+    # but the stock librpmb only opens /dev/block/mmcblk0rpmb. Without it
+    # the keymaster TA can't use rollback resistant keys.
+    symlink /dev/mmcblk0rpmb /dev/block/mmcblk0rpmb
     start boot-hal-1-0
 
 on boot

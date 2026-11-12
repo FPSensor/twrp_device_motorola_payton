@@ -15,6 +15,17 @@ https://github.com/FPSensor/android_kernel_motorola_sdm660
 `vendor/ext_config/moto-sdm660.config` and `vendor/ext_config/payton.config`).
 `prebuilt/Image.gz-dtb` is built from it.
 
+### Decryption
+The data of LineageOS 24.0 can be decrypted, also with a lock screen
+PIN. Two things make that work on kernel 4.19:
+
+- `/dev/block/mmcblk0rpmb` links to the RPMB char device. The keymaster
+  TA reads RPMB to use the rollback resistant FBE keys and fails with
+  error -8 without it.
+- `ro.twrp.fscrypt.legacy_keyring` makes vold add the keys to the
+  session keyring. Keys added to the filesystem are dropped whenever
+  recovery remounts /data, so the credential could no longer be checked.
+
 ### Partitions
 The usual static A/B layout: `system_a/b`, and `oem_a/b` holding vendor.
 The TWRP ramdisk carries the first stage fstab, so it can still start
@@ -62,15 +73,12 @@ repo init -u git://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.
 mkdir -p .repo/local_manifests
 ```
 
-Then add to a local manifest (if you don't have .repo/local_manifest then make that directory and make a blank file and name it something like twrp.xml):
+Then add the payton local manifest. Besides this tree it brings
+FPSensor/android_system_vold, TeamWin's vold with an option to keep the
+v1 FBE keys in the session keyring (see below):
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<manifest>
-  <project name="osm0sis/twrp_abtemplate" path="bootable/recovery/installer" remote="github" revision="master"/>
-  <remote name="fpsensor" fetch="https://github.com/FPSensor" />
-  <project name="twrp_device_motorola_payton" path="device/motorola/payton" remote="fpsensor" revision="twrp-12.1"/>
-</manifest>
+```
+git clone -b twrp-12.1 https://github.com/FPSensor/local_manifests .repo/local_manifests
 ```
 
 Now you can sync your source:
