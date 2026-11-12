@@ -89,10 +89,6 @@ repo sync
 
 To automatically make the TWRP installer zip, you need to import this commit in the build/make path: https://gerrit.twrp.me/c/android_build/+/5445
 
-Haptics need the input force feedback fallback in minuitwrp (the 4.19
-PMIC haptics driver has no sysfs vibrator); without it TWRP works but
-doesn't vibrate.
-
 Finally execute these:
 
 ```
