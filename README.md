@@ -5,13 +5,13 @@ Copyright 2022 - The TeamWin Recovery Project
 
 For building TWRP for Motorola Moto X4 ONLY.
 
-This branch matches the LineageOS 22.2 port of payton to kernel 4.19.
+This branch matches the LineageOS 24.0 port of payton to kernel 4.19.
 It doesn't work with kernel 4.4 ROMs: use TeamWin's android-12.1 branch
 for those.
 
 ### Kernel Source
 https://github.com/FPSensor/android_kernel_motorola_sdm660
-(branch lineage-22.2, `vendor/sdm660-perf_defconfig` plus
+(branch lineage-24.0, `vendor/sdm660-perf_defconfig` plus
 `vendor/ext_config/moto-sdm660.config` and `vendor/ext_config/payton.config`).
 `prebuilt/Image.gz-dtb` is built from it.
 
@@ -21,9 +21,11 @@ The TWRP ramdisk carries the first stage fstab, so it can still start
 Android when installed in boot: the bootloader passes skip_initramfs on
 a normal boot, which the 4.19 kernel turns into
 androidboot.force_normal_boot.
+That fstab mounts /metadata in first stage too: Android 17 keeps its
+aconfig flag storage there and doesn't boot without it.
 
 The boot image header must carry the same OS version and security patch
-level as the ROM (currently Android 15, 2026-10). Keymaster upgrades
+level as the ROM (currently Android 17, 2026-11). Keymaster upgrades
 the FBE key blobs to the patch level of the running boot image when
 TWRP decrypts /data, and Android can't use upgraded blobs afterwards.
 

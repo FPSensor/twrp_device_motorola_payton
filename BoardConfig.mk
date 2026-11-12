@@ -45,7 +45,7 @@ BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_RAMDISK_OFFSET     := 0x01000000
-# Same command line as the LineageOS 22.2 kernel 4.19 boot image, so the
+# Same command line as the LineageOS 24.0 kernel 4.19 boot image, so the
 # TWRP ramdisk can also boot Android when installed into boot.
 BOARD_KERNEL_CMDLINE := \
     androidboot.hardware=qcom \
@@ -63,9 +63,9 @@ BOARD_KERNEL_CMDLINE := \
     loglevel=3
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 TARGET_KERNEL_ARCH := arm64
-# Kernel 4.19 from FPSensor/android_kernel_motorola_sdm660 (lineage-22.2,
+# Kernel 4.19 from FPSensor/android_kernel_motorola_sdm660 (lineage-24.0,
 # vendor/sdm660-perf_defconfig + vendor/ext_config/{moto-sdm660,payton}.config),
-# the same one LineageOS 22.2 boots.
+# the same one LineageOS 24.0 boots.
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/$(BOARD_KERNEL_IMAGE_NAME)
 
 # Platform
@@ -113,15 +113,15 @@ TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_RESETPROP := true
 TW_USE_FSCRYPT_POLICY := 1
 BOARD_USES_QCOM_FBE_DECRYPTION := true
-# Keep the boot image header the same as LineageOS 22.2 (Android 15,
-# 2026-10). Keymaster upgrades the FBE key blobs to the patch level of
+# Keep the boot image header the same as LineageOS 24.0 (Android 17,
+# 2026-11). Keymaster upgrades the FBE key blobs to the patch level of
 # the running boot image when they are used, and refuses to downgrade
 # them, so decrypting /data from a TWRP with a newer patch level would
 # leave Android unable to unlock its own keys. Bump these together with
 # the LineageOS security patch.
-PLATFORM_VERSION := 15
+PLATFORM_VERSION := 17
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
-PLATFORM_SECURITY_PATCH := 2026-10-01
+PLATFORM_SECURITY_PATCH := 2026-11-01
 PRODUCT_ENFORCE_VINTF_MANIFEST := true
 VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 
