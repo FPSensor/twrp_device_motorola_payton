@@ -69,13 +69,13 @@ First repo init the twrp-12.1 tree:
 ```
 mkdir ~/android/twrp-12.1
 cd ~/android/twrp-12.1
-repo init -u git://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
+repo init -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-12.1
 mkdir -p .repo/local_manifests
 ```
 
 Then add the payton local manifest. Besides this tree it brings
 moto-sdm660/android_system_vold, TeamWin's vold with an option to keep the
-v1 FBE keys in the session keyring (see below):
+v1 FBE keys in the session keyring (see Decryption above):
 
 ```
 git clone -b twrp-12.1 https://github.com/moto-sdm660/local_manifests .repo/local_manifests
