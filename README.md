@@ -10,7 +10,7 @@ It doesn't work with kernel 4.4 ROMs: use TeamWin's android-12.1 branch
 for those.
 
 ### Kernel Source
-https://github.com/FPSensor/android_kernel_motorola_sdm660
+https://github.com/moto-sdm660/android_kernel_motorola_sdm660
 (branch lineage-24.0, `vendor/sdm660-perf_defconfig` plus
 `vendor/ext_config/moto-sdm660.config` and `vendor/ext_config/payton.config`).
 `prebuilt/Image.gz-dtb` is built from it.
@@ -74,11 +74,11 @@ mkdir -p .repo/local_manifests
 ```
 
 Then add the payton local manifest. Besides this tree it brings
-FPSensor/android_system_vold, TeamWin's vold with an option to keep the
+moto-sdm660/android_system_vold, TeamWin's vold with an option to keep the
 v1 FBE keys in the session keyring (see below):
 
 ```
-git clone -b twrp-12.1 https://github.com/FPSensor/local_manifests .repo/local_manifests
+git clone -b twrp-12.1 https://github.com/moto-sdm660/local_manifests .repo/local_manifests
 ```
 
 Now you can sync your source:
